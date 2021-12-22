@@ -1,5 +1,5 @@
 # Secret-Santa
-This was a very simple Secret Santa program I made so that we can randomly receive someone virtually via a text document 
+This was a very simple Secret Santa program I made so that we can randomly receive someone virtually via a text document .
 
 How this works:
 There are 2 main ways that this program can be used; (1) either by having a user input each name manually into a predefined list or (2) by running the program and entering each name one at a time.
@@ -14,3 +14,5 @@ Part 2:
 
 This part has to be changed regardless, it is the directory which you want all the text documents to be create at (line 31).
 
+
+Note: if the files were to be sent over discord then the document preview can potentially spoil any secret. An easy solution would be to send each text doucment into a compressed zip folder and then send the zip folder instead.
