@@ -1,49 +1,59 @@
 import random
 
-def main():
-    # add names to list or use second method below
-    names = ["Name1","Name2","Name3"]
-    random.shuffle(names)
-    
-    # use if you want to add names as an input rather than predefined
-    # names = list()
-    # while(True):
-    #     name = input("Name of person to be added:\n").lower()
-    #     if name == "": 
-    #         break
-    # 
-    #     names.append(name)
-    # 
-    # if len(names) < 2:
-    #     print("not enough names in list")
-    #     return
-    
-    # print(names)
-    createFiles(names)
+DIRECTORY = "assignments/"
+NEWLINES = "\n"*8
+NAMES = [ 
+    "Spencer", "Jimmy", "Justin", "AJ", "Sam", "Brendan", "Tyler", "Xander", "Zac", 
+    "Carter", "Adam", "Jack", "Brian", "Drew", "Damien", "Griffin", "Brandon" 
+]
 
+def main():
+    # add names to list if not predefined above
+    if len(NAMES) == 0:
+        name = " "
+        while(name != ""):
+            name = input("Name of person to be added:\n").lower()
+            NAMES.append(name)
+    
+    print(NAMES)
+
+    if len(NAMES) < 3: # we want at least 3 names to in order for it to be unknown
+        print("not enough names in list. Exiting now.")
+        return
+    
+    # shuffle the list to avoid any particular order.
+    random.shuffle(NAMES)
+    
+    # create files with assignments in each
+    createFiles(NAMES)
 
 def createFiles(names):
-    stringbuilder = str()
-    namesLeft = names.copy()
+    namesRemaining = names.copy()
 
+    index = 0
     for i in names:
         # change directory name to your desired location
-        stringbuilder = f"directory name/{i}.txt"
-        f = open(stringbuilder, "w")
+        filename = f"{DIRECTORY}{i}.txt"
+        f = open(filename, "w")
 
-        while(True):
-            randomNum = random.randint(0, len(namesLeft)-1)
-            name = namesLeft[randomNum]
-
-            # cant let someone get themselves
-            if name == i:
-                continue
+        if len(namesRemaining) > 3:
+            while(True):
+                # find a random location to assign someone to and don't allow them to get themselves
+                randomNum = random.randint(0, len(namesRemaining)-1)
+                name = namesRemaining[randomNum]
+                if name == i: continue # will repeat if they got themselves
+            
+                f.write(f"{NEWLINES}{i}, your assignment is:\n\t{name}")
+                f.close()
+                namesRemaining.remove(name)
+                break
         
-            # print(f"{i}, your assignment is:\n\t{name}")
-            f.write(f"{i}, your assignment is:\n\t{name}")
+        else:
+            print("Last 3")
+            name = namesRemaining[(index + 1) % 3]
+            f.write(f"{NEWLINES}{i}, your assignment is:\n\t{name}")
             f.close()
-            namesLeft.remove(name)
-            break
+            index += 1
 
 if "__main__" == __name__:
     main()
