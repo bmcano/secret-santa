@@ -13,5 +13,6 @@ The script also ensures no participant is assigned to themselves.
 
 Each link follows this structure:
 ```
-https://bmcano.github.io/secret-santa/public/{random-string}.html
+https://bmcano.github.io/secret-santa/{year}/{random-string}.html
 ```
+Example: https://bmcano.github.io/secret-santa/example/1.html
