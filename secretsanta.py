@@ -1,5 +1,4 @@
 import random
-import hashlib
 import uuid
 
 PUBLIC_LINK = "https://bmcano.github.io/secret-santa/public/"
