@@ -1,59 +1,101 @@
 import random
+import hashlib
 
-DIRECTORY = "assignments/"
-NEWLINES = "\n"*8
-NAMES = [ 
-    "Spencer", "Jimmy", "Justin", "AJ", "Sam", "Brendan", "Tyler", "Xander", "Zac", 
-    "Carter", "Adam", "Jack", "Brian", "Drew", "Damien", "Griffin", "Brandon" 
-]
+PUBLIC_LINK = "https://bmcano.github.io/secret-santa/"
+PUBLIC_DIR = "public/"
 
 def main():
-    # add names to list if not predefined above
-    if len(NAMES) == 0:
-        name = " "
-        while(name != ""):
-            name = input("Name of person to be added:\n").lower()
-            NAMES.append(name)
-    
-    print(NAMES)
+    names = []
+    with open("names.txt", "r") as file:
+        for line in file:
+            names.append(line.strip())
 
-    if len(NAMES) < 3: # we want at least 3 names to in order for it to be unknown
-        print("not enough names in list. Exiting now.")
+    if len(names) < 3:
+        print("Not enough names were found in the list, program exited.")
         return
-    
+
     # shuffle the list to avoid any particular order.
-    random.shuffle(NAMES)
-    
-    # create files with assignments in each
-    createFiles(NAMES)
+    random.shuffle(names)
+    print(names)
 
-def createFiles(names):
+    # Generate assignments
+    assignments = createAssignments(names)
+    links = generateHTML(assignments)
+
+    print("\nLinks for participants:")
+    for name, link in links.items():
+        print(f"{name}: {link}")
+
+def createAssignments(names):
     namesRemaining = names.copy()
+    assignments = {}
 
+    file = open("assignments.txt", "w")
     index = 0
-    for i in names:
-        # change directory name to your desired location
-        filename = f"{DIRECTORY}{i}.txt"
-        f = open(filename, "w")
-
+    for i in names: 
         if len(namesRemaining) > 3:
             while(True):
-                # find a random location to assign someone to and don't allow them to get themselves
-                randomNum = random.randint(0, len(namesRemaining)-1)
-                name = namesRemaining[randomNum]
+                name = random.choice(namesRemaining)
                 if name == i: continue # will repeat if they got themselves
-            
-                f.write(f"{NEWLINES}{i}, your assignment is:\n\t{name}")
-                f.close()
+                file.write(f"{i} -> {name}\n")
+                assignments[i] = name
                 namesRemaining.remove(name)
                 break
-        
         else:
             print("Last 3")
             name = namesRemaining[(index + 1) % 3]
-            f.write(f"{NEWLINES}{i}, your assignment is:\n\t{name}")
-            f.close()
+            file.write(f"{i} -> {name}\n")
             index += 1
+    file.close()
+    return assignments
+
+def generateHTML(assignments):
+    links = {}
+    print(assignments)
+    for giver, receiver in assignments.items():
+        unique_id = hashlib.sha256(giver.encode()).hexdigest()[:8]
+        filename = f"{PUBLIC_DIR}{unique_id}.html"
+        links[giver] = f"{PUBLIC_LINK}{unique_id}.html"
+
+        html_content = f"""
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Secret Santa Assignment</title>
+                <style>
+                    body {{
+                        font-family: Arial, sans-serif;
+                        text-align: center;
+                         background-color: red;
+                        margin-top: 50px;
+                    }}
+                    .card {{
+                        border: 2px solid #ccc;
+                        border-radius: 10px;
+                        padding: 20px;
+                        max-width: 500px;
+                        background-color: white;
+                        margin: auto;
+                    }}
+                </style>
+            </head>
+            <body>
+                <div class="card">
+                    <h1>Merry Cringemas Assignment</h1>
+                    <p><strong>{giver}</strong>, your assignment is:</p>
+                    <h2>{receiver}</h2>
+                </div>
+            </body>
+            </html>
+        """
+
+        # Write to an HTML file
+        with open(filename, "w") as f:
+            f.write(html_content)
+
+    return links
 
 if "__main__" == __name__:
     main()
