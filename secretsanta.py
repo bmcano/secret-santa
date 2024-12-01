@@ -35,16 +35,13 @@ def create_assignments(names):
 
 def generate_html(assignments):
     links = {}
-    print(assignments)
     for giver, receiver in assignments.items():
         unique_id = uuid.uuid4().hex[:8]
         filename = f"{YEAR_DIR}{unique_id}.html"
         links[giver] = f"{PUBLIC_LINK}{unique_id}.html"
-
         html_content = get_html_content(giver, receiver)
         with open(filename, "w") as f:
             f.write(html_content)
-
     return links
 
 
@@ -65,11 +62,11 @@ def main():
     # generate assignments
     clear_directory(YEAR_DIR)
     assignments = create_assignments(names)
+    # print(assignments) # for debugging purposes
     links = generate_html(assignments)
     file = open("assignments.txt", "w")
     for name, link in links.items():
         file.write(f"{name}: {link}\n")
-        print(f"{name}: {link}")
     file.close()
 
 
